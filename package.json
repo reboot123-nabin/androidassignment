@@ -9,7 +9,20 @@
   "author": "nabin",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
-    "mongoose": "^5.11.12"
-  }
+    "express-validator": "^6.9.2",
+    "mongoose": "^5.11.12",
+    "validation": "0.0.1",
+    "validator": "^13.5.2"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/softwarica-github/t2---backend-api-reboot123-nabin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/softwarica-github/t2---backend-api-reboot123-nabin/issues"
+  },
+  "homepage": "https://github.com/softwarica-github/t2---backend-api-reboot123-nabin#readme"
 }
