@@ -5,6 +5,7 @@ const router=express.Router();
 
 
 router.post('/register',function(req,res){
+   
     const fn1= req.body.fn;
     const ln1=req.body.ln;
     const em1=req.body.em;
