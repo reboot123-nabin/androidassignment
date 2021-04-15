@@ -8,7 +8,7 @@ const Description=mongoose.model("Description",{
         type:String
 
     },
-    desc:{
+    des:{
         type:String
     },
     name:{

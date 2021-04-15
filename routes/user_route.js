@@ -9,6 +9,37 @@ const bcryptjs=require('bcryptjs');
 const { find } = require('../modules/user_model');
 const jwt=require('jsonwebtoken');
 
+router.get('/logout', function(req, res, next) {
+    // remove the req.user property and clear the login session
+    req.logout();
+  
+    // destroy session data
+    req.session = null;
+    res.status(200).json({
+    
+        message:"delete successful",
+    })
+    // redirect to homepage
+    res.redirect('/');
+  });
+
+router.delete('/logout',async(req,res,next)=>{
+    try{
+        const {refreshToken}=req.body
+        if(!refreshToken) throw createError.BadRequest()
+        const userId=await verifyRefreshToken(refreshToken)
+        client.DEl(userId,(err,val)=>{
+            if(err){
+                console.log(err.message)
+                throw createError.internalServerError()
+            }
+            console.log(val)
+            res.sendStatus(204)
+        })
+    }catch(error){
+        next(error)
+    }
+})
 router.post('/user/insert',[
     check('username','Username is required').not().isEmpty(),
     //check('address','address is required!!').not().isEmpty(),
@@ -16,7 +47,7 @@ router.post('/user/insert',[
 ],function(req,res){
 
     const validationErr=validationResult(req);
-    //console.log();
+    console.log(req.body);
     //res.send(validationErr.array());//send data to postman
     if(validationErr.isEmpty()){
     //valid
@@ -32,7 +63,7 @@ router.post('/user/insert',[
     data.save()
     .then(
         function(result){
-            res.status(201).json({message:"your registration successful!!"})
+            res.status(201).json({message:"registered successful"})
         }
     )
     .catch(function(err1){
@@ -48,7 +79,18 @@ router.post('/user/insert',[
 
 
 })
-
+router.get("/user/all",function(req,res){
+    User.find().then(function(data){
+        //res.status(200).json(data);
+        res.status(200).json({
+            message: "auth successful",
+            data,
+          });
+        //res.status(200).json({success:true})
+    }).catch(function(er){
+        res.status(500).json({error:er})
+    })
+})
 router.post('/user/login',function(req,res){
     const username= req.body.username;//fetch data fromform
     const password=req.body.password;//fetch data from form
@@ -56,6 +98,7 @@ router.post('/user/login',function(req,res){
     User.findOne({username:username}).
     then(
         function(userData){
+
            
             if(userData==null){
                 //your id was not found
@@ -71,9 +114,10 @@ router.post('/user/login',function(req,res){
 
                 //token generate
                 const token=jwt.sign({userId:userData._id},'secretkey')
+                console.log(token)
                 res.status(200).json({
-                    t:token,
-                    message:"authon sucessful",
+                    token:token,
+                    message:"auth successful",
                 })
 
 
@@ -87,6 +131,8 @@ router.post('/user/login',function(req,res){
 })
 
 
+
+
 router.get("Description/all",function(req,res){
     News.find().then(function(data){
         res.status(200).json(data);
@@ -94,9 +140,10 @@ router.get("Description/all",function(req,res){
         res.status(500).json({error:er})
     })
 })
+//router.delete()
 
+//router.get("Description/single/:id")
 
-router.get("Description/single/:id")
 
 //update
 module.exports=router;

@@ -2,13 +2,16 @@ const jwt=require('jsonwebtoken');
 //const { findOne } = require('../modules/bus_model');
 
 const User=require('../modules/user_model');
+
 //const Admin=require('..modules/adminModel');
 //const passenger=require('../modules/passengerModel');
 //const driver=require('../modules/driverModel');
 //main ---guard
 module.exports.verifyUser=function(req,res,next){
+    //console.log(req.headers.authorization)
     try{
     const token= req.headers.authorization.split(" ")[1];
+    console.log(token);
     const data=jwt.verify(token,'secretkey')
     //we have id only
     console.log(data.userId);
