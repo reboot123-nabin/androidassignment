@@ -3,43 +3,58 @@ const User=require('../modules/user_model');
 //const {router}=require('./user_route');
 const router=express.Router();
 //for validation our user data
+const auth=require('../middleware/auth');
 const{check,validationResult}=require('express-validator');
 //for password descryption
 const bcryptjs=require('bcryptjs');
 const { find } = require('../modules/user_model');
 const jwt=require('jsonwebtoken');
 
-router.get('/logout', function(req, res, next) {
-    // remove the req.user property and clear the login session
-    req.logout();
-  
-    // destroy session data
-    req.session = null;
-    res.status(200).json({
-    
-        message:"delete successful",
-    })
-    // redirect to homepage
-    res.redirect('/');
-  });
 
-router.delete('/logout',async(req,res,next)=>{
-    try{
-        const {refreshToken}=req.body
-        if(!refreshToken) throw createError.BadRequest()
-        const userId=await verifyRefreshToken(refreshToken)
-        client.DEl(userId,(err,val)=>{
-            if(err){
-                console.log(err.message)
-                throw createError.internalServerError()
-            }
-            console.log(val)
-            res.sendStatus(204)
-        })
-    }catch(error){
-        next(error)
-    }
+
+// router.delete('/logout',async(req,res,next)=>{
+//     try{
+//         const {refreshToken}=req.body
+//         if(!refreshToken) throw createError.BadRequest()
+//         const userId=await verifyRefreshToken(refreshToken)
+//         client.DEl(userId,(err,val)=>{
+//             if(err){
+//                 console.log(err.message)
+//                 throw createError.internalServerError()
+//             }
+//             console.log(val)
+//             res.sendStatus(204)
+//         })
+//     }catch(error){
+//         next(error)
+//     }
+// })
+
+// //for logout
+// [12:46 PM] Dipak Das
+    
+
+// router.post('/logout',auth.verifyUser, function (req, res) {​​​​​​​​
+
+// res.cookie('token', 'none',{​​​​​​​​
+// expires:newDate(Date.now()+ 10*1000),
+// httpOnly:true
+//       }​​​​​​​​)  
+// res.status(200).json({​​​​​​​​message:"logout Successfully", success:true}​​​​​​​​)
+
+// }​​​​​​​​)
+
+
+router.post('/logout', auth.verifyUser, function (req, res) {
+   
+    res.cookie('token', 'none',{
+       expires: new Date(Date.now()+ 10*1000),
+       httpOnly:true
+    })  
+    res.status(200).json({message: "logout Successfully", success:true})
+  
 })
+
 router.post('/user/insert',[
     check('username','Username is required').not().isEmpty(),
     //check('address','address is required!!').not().isEmpty(),

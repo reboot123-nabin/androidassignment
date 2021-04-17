@@ -56,14 +56,14 @@ router.put("/Description/upload-image/:rid", upload.single('nimage'),async funct
 })
 router.put('/Description/update/:id',function(req,res){
     const title=req.body.title;
-    const image=req.body.image;
+    //const image=req.body.image;
     const des=req.body.des;
     const name=req.body.name;
     //const id=req.body.id;
 
     const id = req.params.id;
    console.log(req.body);
-    Description.updateOne({_id:id},{title:title,image:image,des:des,name:name})
+    Description.updateOne({_id:id},{title:title,des:des,name:name})
     
     .then(function(result){
         res.status(200).json({message:"new data has been updated"})
@@ -90,6 +90,32 @@ router.delete('/Description/delete/:id',function(req,res){
     })
 })
 
+// for image update
+// for image update
+router.put('/Description/image/update/:id',auth.verifyUser, upload.single('nimage'), function (req, res) {
+    if (req.file == undefined) {
+        return res.status(400).json({ message: "invalid file", success: false })
+    }
+    const id = req.params.id;
+    Description.findOne({ _id: id }).then(function (data) {
+        var image = data.image
+        if (image != "noImage.jpg") {
+            fs.unlinkSync(image, (err) => {
+                if (err) {
+                    res.status(400).json({ message: "error deleting file", success: false })
+                    return
+                }
+            })
+        }
+    }).catch(function (err) {
+        res.status(400).json({ message: "file not found", success: false })
+    })
+    Description.updateOne({ _id: id }, { image: req.file.path }).then(function (result) {
+        res.status(200).json({ message: "Product image update successfully", success: true })
+    }).catch(function (err) {
+        res.status(500).json({ message: "Failed to Update product image Picture", success: false })
+    })
+})
 
 router.get("/Description/all",function(req,res){
     Description.find().then(function(data){
